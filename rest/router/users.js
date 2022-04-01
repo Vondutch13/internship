@@ -1,7 +1,9 @@
+const bcrypt = require('bcryptjs/dist/bcrypt')
 const express = require('express')
 const router = express.Router()
 const Usermod = require('../models/usermod')
 const {regValidation, loginValidation} = require('../validation')
+
 
 router.get('/',(req,res)=>{
     res.send('this is userz')

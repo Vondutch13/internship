@@ -13,12 +13,13 @@ const regValidation = Joi.object({
 })
 
 const loginValidation = Joi.object({
-        password: Joi.string()
-            .min(8)
-            .required(),
-        email: Joi.string()
+    email: Joi.string()
             .required()
-            .email()
+            .email(),
+    password: Joi.string()
+            .min(8)
+            .required()
+        
 })
 
 
