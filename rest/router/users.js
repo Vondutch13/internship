@@ -3,10 +3,12 @@ const express = require('express')
 const router = express.Router()
 const Usermod = require('../models/usermod')
 const {regValidation, loginValidation} = require('../validation')
+const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
 
 
 router.get('/',(req,res)=>{
-    res.send('this is userz')
+    res.send('this is userz')  
 })
 
 router.post('/', async (req,res)=>{
@@ -49,13 +51,8 @@ router.post('/login',async (req,res) =>{
         const validPass = await bcrypt.compare(req.body.password, userEmail.password);
         if(!validPass) return res.status(400).send('Password Incorrect')
 
-        res.send('Logged In!');
-    }catch(err){
-        res.status(400).json({message: err.message})
-    }
+
     
 
-
-})
 
 module.exports = router
