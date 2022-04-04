@@ -51,7 +51,6 @@ router.post('/login',async (req,res) =>{
         const validPass = await bcrypt.compare(req.body.password, userEmail.password);
         if(!validPass) return res.status(400).send('Password Incorrect')
 
-<<<<<<< HEAD
         //create token
         // const token = jwt.sign({_id:userEmail._id}, process.env.tokensecret)
         // res.json({token:token})
@@ -64,10 +63,34 @@ router.post('/login',async (req,res) =>{
     }catch(err){
         res.status(400).json({message: err.message})
     }
-=======
 
->>>>>>> c229ac1d48856614b8f9174788406a521c0912fa
+    router.get('/products', verifyy, (req,res) => {
     
+        res.json({ 
+        products:{ 
+            name: 'trust kendi',
+            price:'79'
+        } })
+    })
+    
+    
+    function verifyy(req,res,next){
+        const bearerHead = req.headers['authorization']
+        const token = bearerHead && bearerHead.split(' ')[1]
+        if(token == null){
+           console.log('nooooo')
+           return res.sendStatus(401)
+        } 
+    
+        jwt.verify(token, process.env.tokensecret, (err, user) => {
+           if(err) return res.sendStatus(403);
+           req.user = user
+           next()
+        })
+    }
+
+
+})
 
 
 module.exports = router
