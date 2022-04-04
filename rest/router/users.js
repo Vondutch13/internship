@@ -39,6 +39,7 @@ router.post('/login',async (req,res) =>{
         
         //check if email exist
         const userEmail = await Usermod.findOne({email:req.body.email})
+        console.log(userEmail)
         if(!userEmail) return res.status(400).send('Email incorrect')
 
         //check password if passs correct
