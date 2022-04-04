@@ -2,12 +2,8 @@ const express = require('express')
 const router = express.Router()
 const verify = require('./verifyToken')
 
-router.get('/',verify, (req,res) => {
-    res.json({ 
-    products:{
-        name: 'trust kendi',
-        price:'79'
-    } })
+router.get('/', verify, (req,res) => {
+    res.send(req.user._id)
 })
 
 
