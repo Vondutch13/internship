@@ -4,7 +4,7 @@ const router = express.Router()
 const Usermod = require('../models/usermod')
 const {regValidation, loginValidation} = require('../validation')
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs');
+
 
 
 router.get('/',(req,res)=>{
@@ -42,24 +42,16 @@ router.post('/', async (req,res)=>{
 router.post('/login',async (req,res) =>{
 
     try{
-<<<<<<< HEAD
-        //check if email exist
-        const userEmail = await Usermod.findOne({email:req.body.email})
-=======
         
         //check if email exist
         const userEmail = await Usermod.findOne({email:req.body.email})
         console.log(userEmail)
->>>>>>> 2df353be15f2568f310c32ff72fb940e341ba6fc
         if(!userEmail) return res.status(400).send('Email incorrect')
 
         //check password if passs correct
         const validPass = await bcrypt.compare(req.body.password, userEmail.password);
         if(!validPass) return res.status(400).send('Password Incorrect')
 
-<<<<<<< HEAD
-        res.send('Logged In!');
-=======
         //create token
         // const token = jwt.sign({_id:userEmail._id}, process.env.tokensecret)
         // res.json({token:token})
@@ -69,15 +61,10 @@ router.post('/login',async (req,res) =>{
         res.json({accessToken:accessToken})
 
 
->>>>>>> 2df353be15f2568f310c32ff72fb940e341ba6fc
     }catch(err){
         res.status(400).json({message: err.message})
     }
     
-<<<<<<< HEAD
-})
-
-=======
 
 })
 
@@ -109,5 +96,4 @@ function verifyy(req,res,next){
 
 
 
->>>>>>> 2df353be15f2568f310c32ff72fb940e341ba6fc
 module.exports = router

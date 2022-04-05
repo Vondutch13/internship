@@ -3,20 +3,26 @@ const router = express.Router()
 const verify = require('./verifyToken')
 const Products = require('../models/productsDb')
 const { date } = require('joi')
+const { resetWatchers } = require('nodemon/lib/monitor/watch')
 
 router.get('/', verify, (req,res) => {
     res.send(req.user._id)
 })
 
 //view products
-router.get('/viewProducts', verify, async(req,res) =>{
+router.get('/viewProducts', verify,async(req,res) =>{
     try{
         const productz = await Products.find()
         res.json(productz)
     }catch(err){
         res.status(500).json({message: err.message})
     }
-    
+ 
+})
+
+//dummy get function for pagination
+router.get('/viewProductz', paginationResults(Products), async(req,res)=>{
+    res.json(res.paginationResults) 
 })
 
 
@@ -56,7 +62,6 @@ router.patch('/:id', getProduct, async (req, res) =>{
     if(req.body.price != null){
         res.productx.price = req.body.price
     }
-    
 
     try{
         const updateProduct =  await res.productx.save()
@@ -87,5 +92,47 @@ async function getProduct (req, res, next){
 
 }
 
+
+function  paginationResults(model){
+    return async (req, res, next) =>{
+        //pagination
+        //change variable "model" later
+
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+
+        const startIndex = (page - 1) * limit
+        const endIndex =  page * limit
+
+        const results = {}
+        
+
+        if(endIndex < await model.countDocuments().exec()){
+            results.next = {
+                page: page + 1,
+                limit : limit
+            }
+        
+        }
+        
+ 
+        if(startIndex > 0){
+            results.previous = {
+                page: page - 1,
+                limit : limit
+            }
+        }
+        try{
+            results.products = await model.find().limit(limit).skip(startIndex).exec()
+            res.paginationResults=results
+            console.log(results)
+            next()
+        }catch(er){
+            res.status(500).json({message:er.message})
+        }
+        
+        
+    }
+}
 
 module.exports = router;
