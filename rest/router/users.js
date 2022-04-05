@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 
 
 
+
 router.get('/',(req,res)=>{
     res.send('this is userz')  
 })
@@ -25,7 +26,7 @@ router.post('/', async (req,res)=>{
         //hashing password
         const salt = await bcrypt.genSalt(10);
         const hashpass = await bcrypt.hash(req.body.password, salt);
-    
+
         const user = new Usermod({
             name:req.body.name,
             password:hashpass,
@@ -56,7 +57,7 @@ router.post('/login',async (req,res) =>{
         // const token = jwt.sign({_id:userEmail._id}, process.env.tokensecret)
         // res.json({token:token})
         // console.log(token)
-
+        
         const accessToken = jwt.sign({_id:userEmail._id}, process.env.tokensecret)
         res.json({accessToken:accessToken})
 
@@ -64,36 +65,34 @@ router.post('/login',async (req,res) =>{
     }catch(err){
         res.status(400).json({message: err.message})
     }
+
+    router.get('/products', verifyy, (req,res) => {
     
-
-})
-
-router.get('/products', verifyy, (req,res) => {
-    
-    res.json({ 
-    products:{ 
-        name: 'trust kendi',
-        price:'79'
-    } })
-})
-
-
-function verifyy(req,res,next){
-    const bearerHead = req.headers['authorization']
-    const token = bearerHead && bearerHead.split(' ')[1]
-    if(token == null){
-       console.log('nooooo')
-       return res.sendStatus(401)
-    } 
-
-    jwt.verify(token, process.env.tokensecret, (err, user) => {
-       if(err) return res.sendStatus(403);
-       req.user = user
-       next()
+        res.json({ 
+        products:{ 
+            name: 'trust kendi',
+            price:'79'
+        } })
     })
-}
+    
+    
+    function verifyy(req,res,next){
+        const bearerHead = req.headers['authorization']
+        const token = bearerHead && bearerHead.split(' ')[1]
+        if(token == null){
+           console.log('nooooo')
+           return res.sendStatus(401)
+        } 
+    
+        jwt.verify(token, process.env.tokensecret, (err, user) => {
+           if(err) return res.sendStatus(403);
+           req.user = user
+           next()
+        })
+    }
 
 
+})
 
 
 module.exports = router
