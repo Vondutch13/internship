@@ -25,6 +25,18 @@ router.get('/viewProductz', paginationResults(Products), async(req,res)=>{
     res.json(res.paginationResults) 
 })
 
+//viewProducts by Owner
+router.get('/viewByOwner', async(req,res,next)=>{
+    const findUserById = req.query.productOwnerID
+    const sortProducts = req.query.sort
+    
+    try{
+        const productz = await Products.find({productOwnerID:{$regex:findUserById, $options: '$i'}}).sort(sortProducts)
+        res.json(productz)
+    }catch(err){
+        res.status(500).json({message: err.message})
+    }
+})
 
 //createProduct
 router.post('/', verify, async(req,res)=>{
@@ -73,6 +85,9 @@ router.patch('/:id', getProduct, async (req, res) =>{
 
 
 
+
+
+
 //generalfunction for getting the user
 
 async function getProduct (req, res, next){
@@ -92,7 +107,7 @@ async function getProduct (req, res, next){
 
 }
 
-
+//function for pagination
 function  paginationResults(model){
     return async (req, res, next) =>{
         //pagination
@@ -105,27 +120,32 @@ function  paginationResults(model){
         const endIndex =  page * limit
 
         const results = {}
-        
+        var hasNextPage = true
+        var hasPreviousPage = false
 
-        if(endIndex < await model.countDocuments().exec()){
-            results.next = {
-                page: page + 1,
-                limit : limit
-            }
-        
+       
+        if(endIndex != await model.countDocuments().exec()){
+            hasNextPage = true
+        }else {
+            hasNextPage = false;
         }
-        
+
+        if(startIndex == 0){
+            hasPreviousPage=false
+        }else{
+            hasPreviousPage = true
+        }
+
+       results.pageInfo = {
+           hasNextPage : hasNextPage,
+           hasPreviousPage: hasPreviousPage
+       }
  
-        if(startIndex > 0){
-            results.previous = {
-                page: page - 1,
-                limit : limit
-            }
-        }
+      
+
         try{
             results.products = await model.find().limit(limit).skip(startIndex).exec()
             res.paginationResults=results
-            console.log(results)
             next()
         }catch(er){
             res.status(500).json({message:er.message})
