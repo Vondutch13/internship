@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const userRoute = require('./rest/router/users')
 const productRoute = require('./rest/router/products')
 
+
 app.use(express.json())
 app.get('/',(req,res)=>{
     res.send('HOMEs')

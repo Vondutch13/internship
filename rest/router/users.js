@@ -4,7 +4,8 @@ const router = express.Router()
 const Usermod = require('../models/usermod')
 const {regValidation, loginValidation} = require('../validation')
 const jwt = require("jsonwebtoken");
-const bcrypt = require('bcryptjs');
+
+
 
 
 router.get('/',(req,res)=>{
