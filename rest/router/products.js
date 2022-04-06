@@ -29,6 +29,7 @@ router.get('/viewProductz', paginationResults(Products), async(req,res)=>{
 router.get('/viewByOwner', async(req,res,next)=>{
     const findUserById = req.query.productOwnerID
     const sortProducts = req.query.sort
+    
     try{
         const productz = await Products.find({productOwnerID:{$regex:findUserById, $options: '$i'}}).sort(sortProducts)
         res.json(productz)
