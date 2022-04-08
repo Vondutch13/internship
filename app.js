@@ -21,3 +21,5 @@ dbcon.once('open', () => console.log('Connected to db'));
 
 
 app.listen(4000, () =>  console.log('server started'));
+
+module.exports = app
