@@ -35,6 +35,7 @@ router.post('/', async (req,res)=>{
     
         const addUser = await user.save()
         res.status(201).json(addUser)
+        console.log('User added')
     }catch(error){
         res.status(400).json({message: error.message})
     }
