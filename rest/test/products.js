@@ -18,26 +18,29 @@ chai.expect();
 chai.use(chaiHttp);
 
 
-
+var token ="in";
 var ownerID ="";
 // for products
 
 //clear database before starting the test
 before((done) => {
-  
-
+  mongoose.connection.collections.usermods.drop(() => {
+  done();
+ });
 });
 
-async function setup() {
-  var token ="";
-  mongoose.connection.collections.usermods.drop(() => {
-  
-    const userInfo = {
-      name: Chance.name(),
-      password: Chance.string(),
-      email: Chance.email()
-    };
-    chai.request(server)
+
+
+
+ describe("Products endpoint", () => {
+   
+    it.only('should pass a TOKEN if user is logged in', async ()=>{
+          const userInfo = {
+            name: Chance.name(),
+            password: Chance.string(),
+            email: Chance.email()
+          };
+        chai.request(server)
             .post('/users')
             .send(userInfo)
             .end(async(err,res)=>{
@@ -45,21 +48,14 @@ async function setup() {
                 token = jwt.sign({_id:userInfo.email}, process.env.tokensecret) 
                 console.log(token);
                 expect(token).not.to.be.null;
-            });
-  done();
- });
- 
-  return token;
-}
+        }
+      );
+    })
 
-
-
- describe("Products endpoint", () => {
+    
    
- 
-    it.only("should POST new products ", async ()=> {
-      const token = await setup()
-      console.log(token)
+    it.only("should POST new products ", (done) => {
+      
       const productInfo = {
         name: Chance.string(),
         price: Chance.integer({min: 1, max: 1000}).toString(),
@@ -76,10 +72,8 @@ async function setup() {
         .end((err, response) => {
           console.log(token)
             //expect(token).not.to.be.null;
-            console.log(err) 
           response.should.have.status(201);
-
-          
+          done();
         });
     });
 
