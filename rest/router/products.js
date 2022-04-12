@@ -84,12 +84,7 @@ router.patch('/:id', getProduct, async (req, res) =>{
 })
 
 
-
-
-
-
 //generalfunction for getting the user
-
 async function getProduct (req, res, next){
  let productx
 
@@ -142,7 +137,6 @@ function  paginationResults(model){
        }
  
       
-
         try{
             results.products = await model.find().limit(limit).skip(startIndex).exec()
             res.paginationResults=results

@@ -63,7 +63,7 @@ describe("POST /users", () => {
           })
     })
 
-    it('should save USER', (done)=>{
+    it.only('should save USER', (done)=>{
         const userInfo = {
             name: Chance.name(),
             password: Chance.string(),
@@ -78,7 +78,7 @@ describe("POST /users", () => {
             })
     })
 
-    it.only("should save if password is correct", async () => {
+    it("should save if password is correct", async () => {
       const userInfo = {
         name: Chance.name(),
         password: Chance.string(),
