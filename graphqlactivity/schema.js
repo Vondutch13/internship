@@ -1,7 +1,6 @@
 const graphql = require('graphql')
 const Users = require('./models/users')
 const bcrypt = require('bcryptjs')
-const {regValidation} = require('./validation')
 
 const {
   GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList, GraphQLNonNull
@@ -13,11 +12,11 @@ const userType = new GraphQLObjectType({
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
     userName: { type: GraphQLString },
-    password: { type: GraphQLString },
     email: { type: GraphQLString }
   })
 })
 
+// retrieving the users
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
