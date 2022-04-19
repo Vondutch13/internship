@@ -2,7 +2,7 @@ const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 const { buildSchema } = require('graphql')
 const { default: mongoose } = require('mongoose')
-const schema = require('./graphqlactivity/schema')
+const schema = require('./schema')
 require('dotenv').config()
 
 mongoose.connect(process.env.dbcon, { useNewUrlParser: true })
