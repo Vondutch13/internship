@@ -35,6 +35,7 @@ router.post('/', async (req,res)=>{
     
         const addUser = await user.save()
         res.status(201).json(addUser)
+        console.log('User added')
     }catch(error){
         res.status(400).json({message: error.message})
     }
@@ -46,7 +47,6 @@ router.post('/login',async (req,res) =>{
         
         //check if email exist
         const userEmail = await Usermod.findOne({email:req.body.email})
-        console.log(userEmail)
         if(!userEmail) return res.status(400).send('Email incorrect')
 
         //check password if passs correct
@@ -59,21 +59,13 @@ router.post('/login',async (req,res) =>{
         // console.log(token)
         
         const accessToken = jwt.sign({_id:userEmail._id}, process.env.tokensecret)
+        console.log(accessToken)
         res.json({accessToken:accessToken})
 
 
     }catch(err){
         res.status(400).json({message: err.message})
     }
-
-    router.get('/products', verifyy, (req,res) => {
-    
-        res.json({ 
-        products:{ 
-            name: 'trust kendi',
-            price:'79'
-        } })
-    })
     
     
     function verifyy(req,res,next){

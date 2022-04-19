@@ -20,6 +20,6 @@ dbcon.on('error', (err) => console.log(err));
 dbcon.once('open', () => console.log('Connected to db'));
 
 
-app.listen(4000, () =>  console.log('server started'));
+app.listen(5000, () =>  console.log('server started'));
 
 module.exports = app
