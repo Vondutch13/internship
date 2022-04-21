@@ -1,10 +1,30 @@
 const graphql = require('graphql')
 const Users = require('./models/users')
 const bcrypt = require('bcryptjs')
+const Products = require('./models/products')
+const { date } = require('joi')
 
 const {
-  GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList, GraphQLNonNull
+  GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLList, GraphQLNonNull,
+  Kind, GraphQLScalarType
 } = graphql
+
+const dateNow = new GraphQLScalarType({
+  name: 'Date',
+  description: 'Date custom scalar type',
+  parseValue (value) {
+    return new Date(value) // value from the client
+  },
+  serialize (value) {
+    return value.getTime // value sent to the client
+  },
+  parseLiteral (ast) {
+    if (ast.kind === Kind.INT) {
+      return new Date(+ast.value) // ast value is always in string format
+    }
+    return null
+  }
+})
 
 const userType = new GraphQLObjectType({
   name: 'User',
@@ -16,6 +36,16 @@ const userType = new GraphQLObjectType({
   })
 })
 
+// product type
+const productType = new GraphQLObjectType({
+  name: 'Product',
+  fields: () => ({
+    name: { type: GraphQLString },
+    price: { type: GraphQLString },
+    createdAt:{type: dateNow}
+  })
+})
+
 // retrieving the users
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -24,6 +54,12 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(userType),
       resolve (parent, args) {
         return Users.find({})
+      }
+    },
+    products: {
+      type: new GraphQLList(productType),
+      resolve (parent, args) {
+        return Products.find({})
       }
     }
   }
@@ -49,7 +85,25 @@ const mutation = new GraphQLObjectType({
           password: await bcrypt.hash(args.password, 12),
           email: args.email
         })
+        console.log('user added')
         return user.save()
+      }
+    },
+    addProduct: {
+      type: productType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        price: { type: new GraphQLNonNull(GraphQLString) },
+        createdAt: { type: dateNow}
+      },
+      resolve (parent, args) {
+        const product = Products({
+          name: args.name,
+          price: args.price,
+          createdAt: args.createdAt
+        })
+        console.log('Product saved!')
+        return product.save()
       }
     }
   }

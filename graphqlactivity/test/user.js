@@ -5,6 +5,7 @@ const Chance = require('chance')
 const { expect } = require('chai')
 const bcrypt = require('bcryptjs')
 const Users = require('../models/users')
+const { default: mongoose } = require('mongoose')
 
 chai.should()
 chai.expect()
@@ -21,9 +22,15 @@ const query = `
   }
 `
 
+beforeEach((done) => {
+  mongoose.connection.collections.userlists.drop(() => {
+  done()
+ });
+});
+
 // eslint-disable-next-line no-undef
 describe('GraphQL', () => {
-  it('should save users', async () => {
+  it('should save users', (done) => {
     const firstName = chanceHelper.name()
     const lastName = chanceHelper.name()
     const userName = chanceHelper.word()
@@ -45,14 +52,15 @@ describe('GraphQL', () => {
       .set('Content-type', 'application/json')
       .expect(200)
       .end((_err, res) => {
+        console.log(res.text)
         expect(res.body.data.addUser.firstName).to.equal(firstName)
         expect(res.body.data.addUser.lastName).to.equal(lastName)
         expect(res.body.data.addUser.userName).to.equal(userName)
         expect(res.body.data.addUser.email).to.equal(email)
+        done()
       })
   })
-
-  it('returns all users', async () => {
+it('returns all users', async () => {
     const input = {
       firstName: chanceHelper.name(),
       lastName: chanceHelper.name(),
@@ -68,7 +76,6 @@ describe('GraphQL', () => {
       .expect(200)
       .end((_err, res) => {
         expect(res.body.data.users.length).to.equal(1)
-
         const user = res.body.data.users[0]
         expect(user.firstName).to.equal(input.firstName)
         expect(user.lastName).to.equal(input.lastName)

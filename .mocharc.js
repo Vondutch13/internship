@@ -5,5 +5,5 @@ module.exports = {
   require: [
     'graphqlactivity/test/clean-database.js',
   ],
-  spec: ['graphqlactivity/test/user.js']
+    spec: ['graphqlactivity/test/user.js']
 };
